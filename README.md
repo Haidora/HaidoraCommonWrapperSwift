@@ -4,7 +4,7 @@
 
 ##How to use
 
-###HDAlertViewManager
+###HDAlertViewManager(再也不用XXXAlertView)
 
 ```
 Objective-C
