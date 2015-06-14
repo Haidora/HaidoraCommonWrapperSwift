@@ -11,19 +11,19 @@ import UIKit
 
 class HDAlertView: HDAlertDelegate {
     
-    func localizedString(key: String) -> String {
+    @objc func localizedString(key: String) -> String {
         return NSLocalizedString(key, tableName: "HaidoraCommonWrapperSwift", bundle: NSBundle(forClass: self.dynamicType), value: "", comment: "")
     }
     
-    func alertWithMessage(message: String) {
+    @objc func alertWithMessage(message: String) {
         self.alertWithTitle(self.localizedString("title"),message: message)
     }
     
-    func alertWithTitle(title: String, message: String) {
+    @objc func alertWithTitle(title: String, message: String) {
         self.alertWithTitle(title, message: message, cancelTitle: self.localizedString("cancel"), okTitle: nil)
     }
     
-    func alertWithTitle(title: String, message: String, cancelTitle: String, okTitle: String?) {
+    @objc func alertWithTitle(title: String, message: String, cancelTitle: String, okTitle: String?) {
         var buttons = [String]()
         if let title = okTitle {
             buttons.append(title)
@@ -31,7 +31,7 @@ class HDAlertView: HDAlertDelegate {
         self.alertWithTitle(title, message: message, clickAction: nil, cancelTitle: cancelTitle, otherButtonTitles: buttons)
     }
     
-    func alertWithTitle(title: String, message: String, clickAction: HDClickBlock?, cancelTitle: String, otherButtonTitles: [String]?) {
+    @objc func alertWithTitle(title: String, message: String, clickAction: HDClickBlock?, cancelTitle: String, otherButtonTitles: [String]?) {
         var alertView = UIAlertView(title: title, message: message, clickAction: clickAction, cancelButtonTitle: cancelTitle)
         if let buttonTitles = otherButtonTitles {
             for buttonTitle in buttonTitles {
@@ -41,7 +41,7 @@ class HDAlertView: HDAlertDelegate {
         alertView.show()
     }
     
-    func alertWithError(error: NSError) {
+    @objc func alertWithError(error: NSError) {
         if error.title != nil && error.message != nil {
             self.alertWithTitle(error.title!, message: error.message!)
         }

@@ -1,28 +1,82 @@
 # HaidoraCommonWrapperSwift
 
-[![CI Status](http://img.shields.io/travis/mrdaios/HaidoraCommonWrapperSwift.svg?style=flat)](https://travis-ci.org/mrdaios/HaidoraCommonWrapperSwift)
-[![Version](https://img.shields.io/cocoapods/v/HaidoraCommonWrapperSwift.svg?style=flat)](http://cocoapods.org/pods/HaidoraCommonWrapperSwift)
-[![License](https://img.shields.io/cocoapods/l/HaidoraCommonWrapperSwift.svg?style=flat)](http://cocoapods.org/pods/HaidoraCommonWrapperSwift)
-[![Platform](https://img.shields.io/cocoapods/p/HaidoraCommonWrapperSwift.svg?style=flat)](http://cocoapods.org/pods/HaidoraCommonWrapperSwift)
+常用代码的封装.
 
-## Usage
+##How to use
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+###HDAlertViewManager
 
-## Requirements
+```
+Objective-C
 
-## Installation
++ (void)alertWithMessage:(NSString *)message;
++ (void)alertWithTitle:(NSString *)title message:(NSString *)message;
++ (void)alertWithTitle:(NSString *)title message:(NSString *)message cancelTitle:(NSString *)cancelTitle okTitle:(NSString *)okTitle;
+// Swift兼容Objective-C版本,多个参数用数组代替
++ (void)alertWithTitle:(NSString *)title message:(NSString *)message clickAction:(void (^)(id view, NSInteger index))clickAction cancelTitle:(NSString *)cancelTitle moreButtonTitles:(NSArray *)moreButtonTitles;
++ (void)alertWithError:(NSError *)error;
 
-HaidoraCommonWrapperSwift is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+Swift
+
+class func alertWithMessage(message: String)
+class func alertWithTitle(title: String, message: String)
+class func alertWithTitle(title: String, message: String, cancelTitle: String, okTitle: String?)
+class func alertWithTitle(title: String, message: String, clickAction: ((AnyObject, Int) -> Void)?, cancelTitle: String, _ moreButtonTitles: String...)
+class func alertWithError(error: NSError)
+```
+
+###NSError,弹出自定义错误提示
+
+```
+Objective-C
+
+NSError *error = [[NSError alloc]initWithTitle:@"Custom Title" message:@"Custom Message"];
+
+Swift
+
+var error = NSError(title: "Custom Title", message: "Custom Message")
+```
+
+###自定义弹出框
+
+```
+//实现HDAlertDelegate
+class XXXAlertView: HDAlertDelegate {
+}
+//配置HDAlertViewManager参数
+HDAlertViewManager.shareInstance().alertDelegate = XXXAlertView()
+
+```
+
+##Installation
+
+###Manually
+
+[Download the latest tag](https://github.com/Haidora/HaidoraCommonWrapperSwift/tags) and drag the sources into your Xcode project.
+
+###Git Submodule
+
+```
+git submodule add https://github.com/Haidora/HaidoraCommonWrapperSwift.git
+git submodule update --init
+```
+
+###CocoaPods
+
+可以通过[HaidoraPods](https://github.com/Haidora/HaidoraPods)来安装。Podfile如下:
 
 ```ruby
 pod "HaidoraCommonWrapperSwift"
+//or
+pod 'HaidoraCommonWrapperSwift', :git => 'https://github.com/Haidora/HaidoraCommonWrapperSwift.git', :branch => 'developer'
 ```
+## Requirements
 
-## Author
+* iOS 7.0+
 
-mrdaios, mrdaios@gmail.com
+## Contact
+
+[Mrdaios](mailto:mrdaios@gmail.com)
 
 ## License
 

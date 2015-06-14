@@ -9,9 +9,12 @@
 import Foundation
 import UIKit
 
-public typealias HDClickBlock = (view: AnyObject?, index: Int?) -> Void
+public typealias HDClickBlock = (AnyObject, Int) -> Void
 
-public protocol HDAlertDelegate {
+/**
+*  如果要自定义弹出框,弹出框需要实现该协议
+*/
+@objc public protocol HDAlertDelegate {
     
     func alertWithMessage(message: String)
     func alertWithTitle(title: String, message: String)
@@ -20,9 +23,9 @@ public protocol HDAlertDelegate {
     func alertWithError(error: NSError)
 }
 
-public class HDAlertViewManager {
+@objc public class HDAlertViewManager {
     
-    public var alertDelegate: HDAlertDelegate?
+    public var alertDelegate: HDAlertDelegate
     
     public class func shareInstance() -> HDAlertViewManager {
         struct HDAlertViewManagerSingleton {
@@ -36,7 +39,7 @@ public class HDAlertViewManager {
         return HDAlertViewManagerSingleton.instance!
     }
     
-    init(alertDelegate: HDAlertDelegate?) {
+    init(alertDelegate: HDAlertDelegate) {
         self.alertDelegate = alertDelegate;
     }
 }
@@ -44,27 +47,40 @@ public class HDAlertViewManager {
 public extension HDAlertViewManager {
     
     public class func alertWithMessage(message: String) {
-        HDAlertViewManager.shareInstance().alertDelegate?.alertWithMessage(message)
+        HDAlertViewManager.shareInstance().alertDelegate.alertWithMessage(message)
     }
     
     public class func alertWithTitle(title: String, message: String) {
-        HDAlertViewManager.shareInstance().alertDelegate?.alertWithTitle(title, message: message)
+        HDAlertViewManager.shareInstance().alertDelegate.alertWithTitle(title, message: message)
     }
-
+    
     public class func alertWithTitle(title: String, message: String, cancelTitle: String, okTitle: String?) {
-        HDAlertViewManager.shareInstance().alertDelegate?.alertWithTitle(title, message: message, cancelTitle: cancelTitle, okTitle: okTitle)
+        HDAlertViewManager.shareInstance().alertDelegate.alertWithTitle(title, message: message, cancelTitle: cancelTitle, okTitle: okTitle)
     }
-
+    
+    /**
+    兼容Objective-C版本
+    
+    :param: title
+    :param: message
+    :param: clickAction
+    :param: cancelTitle
+    :param: moreButtonTitles 多个参数用数组代替
+    */
+    public class func alertWithTitle(title: String, message: String, clickAction: HDClickBlock?, cancelTitle: String, moreButtonTitles: [String]?) {
+        HDAlertViewManager.shareInstance().alertDelegate.alertWithTitle(title, message: message, clickAction: clickAction, cancelTitle: cancelTitle, otherButtonTitles: moreButtonTitles)
+    }
+    
     public class func alertWithTitle(title: String, message: String, clickAction: HDClickBlock?, cancelTitle: String, _ moreButtonTitles: String... ) {
         var buttonTitles = [String]()
         for buttonTitle in moreButtonTitles {
             buttonTitles.append(buttonTitle)
         }
-        HDAlertViewManager.shareInstance().alertDelegate?.alertWithTitle(title, message: message, clickAction: clickAction, cancelTitle: cancelTitle, otherButtonTitles: buttonTitles)
+        HDAlertViewManager.shareInstance().alertDelegate.alertWithTitle(title, message: message, clickAction: clickAction, cancelTitle: cancelTitle, otherButtonTitles: buttonTitles)
     }
-
+    
     public class func alertWithError(error: NSError) {
-        HDAlertViewManager.shareInstance().alertDelegate?.alertWithError(error)
+        HDAlertViewManager.shareInstance().alertDelegate.alertWithError(error)
     }
 }
 
@@ -76,8 +92,8 @@ public extension NSError {
     /**
     弹出错误描述
     
-    :param: title   标题
-    :param: message 内容
+    :param: title   错误提示标题
+    :param: message 错误提示内容
     
     :returns:
     */
@@ -119,6 +135,30 @@ internal extension NSError {
 
 extension UIAlertView: UIAlertViewDelegate {
     
+    /**
+    兼容Objective-C版本
+    
+    :param: title
+    :param: message
+    :param: clickAction
+    :param: cancelButtonTitle
+    :param: moreButtonTitles  多个参数用数组代替
+    
+    :returns:
+    */
+    public convenience init(title: String, message: String, clickAction: HDClickBlock?, cancelButtonTitle: String?, moreButtonTitles: [String]?) {
+        self.init(title: title, message: message, delegate: nil, cancelButtonTitle: cancelButtonTitle)
+        if let click = clickAction {
+            self.delegate = self
+            self.clickAction = click
+        }
+        if let moreButtonTitles = moreButtonTitles {
+            for buttonTitle in moreButtonTitles {
+                self.addButtonWithTitle(buttonTitle)
+            }
+        }
+    }
+    
     public convenience init(title: String, message: String, clickAction: HDClickBlock?, cancelButtonTitle: String?, _ moreButtonTitles: String...) {
         self.init(title: title, message: message, delegate: nil, cancelButtonTitle: cancelButtonTitle)
         if let click = clickAction {
@@ -132,7 +172,7 @@ extension UIAlertView: UIAlertViewDelegate {
     
     //MAKR: UIAlertViewDelegate
     public func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        self.clickAction?(view: alertView, index: buttonIndex)
+        self.clickAction?(alertView, buttonIndex)
     }
 }
 
