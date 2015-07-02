@@ -70,9 +70,17 @@ pod "HaidoraCommonWrapperSwift"
 //or
 pod 'HaidoraCommonWrapperSwift', :git => 'https://github.com/Haidora/HaidoraCommonWrapperSwift.git', :branch => 'developer'
 ```
+
+###CocoaSeeds
+可以通过[CocoaSeeds](https://github.com/devxoul/CocoaSeeds)来安装。Seedfile如下:
+```
+github "Haidora/HaidoraCommonWrapperSwift", "0.1.1", :files => "Pod/Classes/AlertView/*.{swift,h}"
+```
+
 ## Requirements
 
 * iOS 7.0+
+* Xcode 6.3.2
 
 ## Contact
 
